@@ -6,7 +6,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".presentation.MainActivity">
+        tools:context=".presentation.view.MainActivity">
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/activitiesTabLayout"
@@ -24,7 +24,7 @@
             app:tabIndicatorGravity="center"
             app:tabIndicatorHeight="0dp"
             app:tabMaxWidth="0dp"
-            app:tabMode="scrollable"
+            app:tabMode="auto"
             app:tabPadding="8dp"
             app:tabSelectedTextColor="@color/secondaryTextColor"
             app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"

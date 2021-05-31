@@ -1,4 +1,4 @@
-package com.chidi.pokemongo.presentation
+package com.chidi.pokemongo.presentation.view
 
 import android.os.Bundle
 import android.view.ViewGroup
@@ -7,10 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.chidi.pokemongo.R
 import com.chidi.pokemongo.databinding.ActivityMainBinding
 import com.chidi.pokemongo.presentation.adapters.GoActivitiesPagerAdapter
-import com.chidi.pokemongo.presentation.view.CapturedFragment
-import com.chidi.pokemongo.presentation.view.CommunityFragment
-import com.chidi.pokemongo.presentation.view.ExploreFragment
-import com.chidi.pokemongo.presentation.view.MyTeamFragment
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -1,4 +1,4 @@
-package com.chidi.pokemongo.presentation
+package com.chidi.pokemongo.presentation.view
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

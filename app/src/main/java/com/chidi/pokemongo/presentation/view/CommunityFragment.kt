@@ -5,19 +5,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.chidi.pokemongo.R
+import com.chidi.pokemongo.databinding.FragmentCommunityBinding
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * A simple [Fragment] subclass.
  */
+@AndroidEntryPoint
 class CommunityFragment : Fragment() {
+
+    private var binding: FragmentCommunityBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_community, container, false)
+        binding = FragmentCommunityBinding.inflate(inflater)
+        return binding?.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
 
 }

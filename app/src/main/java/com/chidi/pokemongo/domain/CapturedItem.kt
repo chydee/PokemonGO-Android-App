@@ -1,4 +1,4 @@
-package com.chidi.pokemongo
+package com.chidi.pokemongo.domain
 
 data class CapturedItem(
     val name: String, // Squirtle
