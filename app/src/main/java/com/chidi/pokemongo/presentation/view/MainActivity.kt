@@ -3,10 +3,12 @@ package com.chidi.pokemongo.presentation.view
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.chidi.pokemongo.R
 import com.chidi.pokemongo.databinding.ActivityMainBinding
 import com.chidi.pokemongo.presentation.adapters.GoActivitiesPagerAdapter
+import com.chidi.pokemongo.presentation.model.MainViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -16,6 +18,8 @@ class MainActivity : AppCompatActivity() {
     private var binding: ActivityMainBinding? = null
 
     private lateinit var activitiesPagerAdapter: GoActivitiesPagerAdapter
+
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,11 +36,19 @@ class MainActivity : AppCompatActivity() {
         ) // set the fragments lists
         binding?.activitiesViewPager?.adapter = activitiesPagerAdapter
         setUpGOActivities()
+        getToken()//Check TODO
     }
 
     override fun onDestroy() {
         super.onDestroy()
         binding = null // release binding when activity is destroyed
+    }
+
+    /**
+     *  Get Token
+     */
+    private fun getToken() {
+        viewModel.getActivity()
     }
 
     /**

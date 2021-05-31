@@ -1,15 +1,20 @@
 package com.chidi.pokemongo.core.di
 
+import android.app.Application
 import com.chidi.pokemongo.BuildConfig
+import com.chidi.pokemongo.data.local.SharedPreferenceManager
+import com.chidi.pokemongo.data.remote.api.HttpInterceptor
+import com.chidi.pokemongo.data.remote.api.PokemonGOService
 import com.google.gson.GsonBuilder
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
@@ -18,31 +23,38 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+
+    @Singleton
+    @Provides
+    fun providePref(app: Application): SharedPreferenceManager = SharedPreferenceManager(app)
+
     @Provides
     fun provideBaseUrl() = BuildConfig.BASE_URL
 
 
     @Singleton
     @Provides
-    fun provideOkHttpClient() = if (BuildConfig.DEBUG) {
+    fun provideOkHttpClient(pref: SharedPreferenceManager) = if (BuildConfig.DEBUG) {
         val logginInterceptor = HttpLoggingInterceptor()
         logginInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS)
             .addInterceptor(logginInterceptor)
+            .addInterceptor(HttpInterceptor(pref))
             .build()
     } else {
         OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS)
+            .addInterceptor(HttpInterceptor(pref))
             .build()
     }
 
     @Singleton
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient, BASE_URL: String): Retrofit = Retrofit.Builder()
-        .addCallAdapterFactory(CoroutineCallAdapterFactory())
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
         .addConverterFactory(MoshiConverterFactory.create())
         .addConverterFactory(
             GsonConverterFactory.create(
@@ -56,12 +68,12 @@ object NetworkModule {
         .client(okHttpClient)
         .build()
 
-    /*@Provides
-    @Singleton
-    fun provideApiService(retrofit: Retrofit): ApiService =
-        retrofit.create(ApiService::class.java)
-
     @Provides
     @Singleton
-    fun provideApiHelper(apiHelper: ApiServiceHelperImpl): ApiServiceHelper = apiHelper*/
+    fun providePokemonGOService(retrofit: Retrofit): PokemonGOService = retrofit.create(PokemonGOService::class.java)
 }
+
+/* @Provides
+ @Singleton
+ fun provideApiHelper(apiHelper: ApiServiceHelperImpl): ApiServiceHelper = apiHelper
+}*/
