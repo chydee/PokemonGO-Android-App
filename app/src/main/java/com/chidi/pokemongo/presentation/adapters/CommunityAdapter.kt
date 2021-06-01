@@ -30,7 +30,7 @@ class CommunityAdapter : RecyclerView.Adapter<CommunityAdapter.CommunityViewHold
     private val differ = AsyncListDiffer(this, diffCallback)
 
     inner class CommunityViewHolder(private var binding: PokemonTeamItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(center: TeamItem) {
+        fun bind(team: TeamItem) {
             /*binding.center = center
             binding.centerGetDirectionBtn.setOnClickListener {
                 listener.onGetDirectionClicked(center)

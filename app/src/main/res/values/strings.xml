@@ -9,4 +9,5 @@
     <string name="trainer_imageview_desc">"Pokemon Trainer Image "</string>
     <string name="friends_card_label">Friends</string>
     <string name="foes_card_label">Foes</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

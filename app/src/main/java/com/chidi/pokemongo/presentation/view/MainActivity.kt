@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         ) // set the fragments lists
         binding?.activitiesViewPager?.adapter = activitiesPagerAdapter
         setUpGOActivities()
-        getToken()//Check TODO
+        refreshToken()
     }
 
     override fun onDestroy() {
@@ -47,8 +47,8 @@ class MainActivity : AppCompatActivity() {
     /**
      *  Get Token
      */
-    private fun getToken() {
-        viewModel.getActivity()
+    private fun refreshToken() {
+        viewModel.getToken()
     }
 
     /**

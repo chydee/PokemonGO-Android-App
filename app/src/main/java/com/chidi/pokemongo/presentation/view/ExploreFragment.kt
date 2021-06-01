@@ -4,170 +4,68 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import com.chidi.pokemongo.Character
 import com.chidi.pokemongo.R
-import com.chidi.pokemongo.databinding.FragmentExploreBinding
-import com.chidi.pokemongo.place.PlaceRenderer
 import com.chidi.pokemongo.presentation.utils.Constants
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.maps.android.clustering.ClusterManager
-import com.google.maps.android.ktx.awaitMap
-import com.google.maps.android.ktx.awaitMapLoad
-import java.util.*
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
 
 
 /**
  * A simple [Fragment] subclass.
  */
-class ExploreFragment : Fragment() {
+class ExploreFragment : Fragment(), OnMapReadyCallback {
 
-    private var binding: FragmentExploreBinding? = null
     private lateinit var mMap: GoogleMap
 
-
-    private lateinit var places: List<Character>
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentExploreBinding.inflate(inflater)
-        return binding?.root
+        return inflater.inflate(R.layout.fragment_explore, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        places = Constants.randomCharacters
-        val mapFragment = requireActivity().supportFragmentManager.findFragmentById(
-            R.id.map_fragment
-        ) as? SupportMapFragment
-        lifecycleScope.launchWhenCreated {
-            // Get map
-            val googleMap = mapFragment?.awaitMap()
-
-            if (googleMap != null) {
-                addClusteredMarkers(googleMap)
-            }
-
-            // Wait for map to finish loading
-            googleMap?.awaitMapLoad()
-
-            // Ensure all places are visible in the map
-            val bounds = LatLngBounds.builder()
-            places.forEach { bounds.include(LatLng(it.rand_lat, it.rand_long)) }
-            googleMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 20))
-        }
-
-        /*mapFragment?.getMapAsync { googleMap ->
-            addMarkers(googleMap)
-        }*/
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        val mapFragment = childFragmentManager
+            .findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
     }
 
     /**
-     * Adds markers to the map with clustering support.
+     * Manipulates the map once available.
+     * This callback is triggered when the map is ready to be used.
+     * This is where we can add markers or lines, add listeners or move the camera. In this case,
+     * we just add a marker near Sydney, Australia.
+     * If Google Play services is not installed on the device, the user will be prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * installed Google Play services and returned to the app.
      */
-    private fun addClusteredMarkers(googleMap: GoogleMap) {
-        // Create the ClusterManager class and set the custom renderer
-        val clusterManager = ClusterManager<Character>(requireContext(), googleMap)
-        clusterManager.renderer =
-            PlaceRenderer(
-                requireContext(),
-                googleMap,
-                clusterManager
-            )
-
-        // Set custom info window adapter
-        // clusterManager.markerCollection.setInfoWindowAdapter(MarkerInfoWindowAdapter(this))
-
-        // Add the places to the ClusterManager
-        clusterManager.addItems(places)
-        clusterManager.cluster()
-
-
-        // When the camera starts moving, change the alpha value of the marker to translucent
-        googleMap.setOnCameraMoveStartedListener {
-            clusterManager.markerCollection.markers.forEach { it.alpha = 0.3f }
-            clusterManager.clusterMarkerCollection.markers.forEach { it.alpha = 0.3f }
-        }
-
-        googleMap.setOnCameraIdleListener {
-            // When the camera stops moving, change the alpha value back to opaque
-            clusterManager.markerCollection.markers.forEach { it.alpha = 1.0f }
-            clusterManager.clusterMarkerCollection.markers.forEach { it.alpha = 1.0f }
-
-            // Call clusterManager.onCameraIdle() when the camera stops moving so that re-clustering
-            // can be performed when the camera stops moving
-            clusterManager.onCameraIdle()
-        }
-    }
-
-    /**
-     * Adds marker representations of the places list on the provided GoogleMap object
-     */
-    private fun addMarkers(googleMap: GoogleMap) {
-        Constants.randomCharacters.forEach { place ->
-            val marker = googleMap.addMarker(
-                MarkerOptions()
-                    .title(place.name)
-                    .position(LatLng(place.rand_lat, place.rand_long))
+    override fun onMapReady(p0: GoogleMap) {
+        mMap = p0
+        val markerIcon = BitmapDescriptorFactory.fromResource(R.drawable.icons_pokeball)
+        // Add a marker in random location and move the camera
+        val defaultPos = LatLng(1.6735856304167953, 21.51259421447304)
+        mMap.addMarker(MarkerOptions().position(defaultPos).title("Pokemon").icon(markerIcon))
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(defaultPos))
+        Constants.randomCharacters.forEach { pokemon ->
+            mMap.addMarker(
+                MarkerOptions().position(LatLng(pokemon.rand_lat, pokemon.rand_long)).title(pokemon.name).icon(markerIcon)
             )
         }
-    }
 
-    fun getLocation(x0: Double, y0: Double, radius: Int) {
-        val random = Random()
-
-        // Convert radius from meters to degrees
-        val radiusInDegrees = (radius / 111000f).toDouble()
-        val u: Double = random.nextDouble()
-        val v: Double = random.nextDouble()
-        val w = radiusInDegrees * sqrt(u)
-        val t = 2 * Math.PI * v
-        val x = w * cos(t)
-        val y = w * sin(t)
-
-        // Adjust the x-coordinate for the shrinking of the east-west distances
-        val newX = x / cos(Math.toRadians(y0))
-        val foundLongitude = newX + x0
-        val foundLatitude = y + y0
-        println("Longitude: $foundLongitude  Latitude: $foundLatitude")
-    }
-
-    /* private fun loadCharactersAndSetOnMap(googleMap: GoogleMap) {
-         val pokes = listOf(
-             Character(1, "Bulbasaur", 20.10099206786478, 32.5910273441159),
-             Character(10, "Caterpie", -7.558541622012861, 44.741980750732765),
-             Character(4, "Charmander", 43.486976716307126, 47.03270976831398),
-             Character(7, "Squirtle", 20.10099206786478, 21.51259421447304),
-             Character(3, "Keith", 2.6735856304167953, 31.5910273441159),
-         )
-         val pokeballIcon = BitmapDescriptorFactory
-             .fromBitmap(ResourceUtil.getBitmap(requireActivity(), R.drawable.ic_pokeball_b))
-         pokes.forEach { character ->
-             val markerOption = MarkerOptions()
-                 .title(character.name)
-                 .position(LatLng(character.rand_lat, character.rand_long))
-                 .icon(pokeballIcon)
-                 .anchor(0.5f, 0.5f)
-                 .snippet(character.id.toString())
-             googleMap.addMarker(markerOption)
-         }
-     }*/
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding = null
+        mMap.setOnMarkerClickListener { marker ->
+            Toast.makeText(requireContext(), marker.position.toString(), Toast.LENGTH_SHORT).show()
+            true
+        }
     }
 
 }

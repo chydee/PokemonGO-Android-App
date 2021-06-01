@@ -11,9 +11,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -22,15 +19,11 @@ class MainViewModel @Inject constructor(private val repository: GoRepository, pr
 
     private val compositeDisposable = CompositeDisposable()
 
-    init {
-        getToken()
-    }
-
     private val _activity = MutableLiveData<ActivityResponse>()
     val activity: LiveData<ActivityResponse>
         get() = _activity
 
-    private fun getToken(email: String = BuildConfig.EMAIL) {
+    fun getToken(email: String = BuildConfig.EMAIL) {
         repository.getToken(email).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ response ->
@@ -44,24 +37,11 @@ class MainViewModel @Inject constructor(private val repository: GoRepository, pr
         repository.getActivity().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ response ->
-                response.enqueue(object : Callback<ActivityResponse> {
-                    override fun onResponse(call: Call<ActivityResponse>, response: Response<ActivityResponse>) {
-                        if (response.code() == 401) {
-                            getToken(); getActivity()
-                        }
-                        _activity.postValue(response.body())
-                    }
-
-                    override fun onFailure(call: Call<ActivityResponse>, t: Throwable) {
-                        Timber.d(t)
-                    }
-
-                })
+                _activity.postValue(response)
             }, {
                 Timber.d(it)
-                // if errorCode is 401 get token and try again
-                getToken()
-                getActivity()
+                //  errorCode is 401 get token and try again
+                //retryGetActivity()
             }).let { compositeDisposable.add(it) }
     }
 
