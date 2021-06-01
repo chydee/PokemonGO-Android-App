@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
                 }.attach()
             }
         }
-        binding?.activitiesViewPager?.isUserInputEnabled = false
+        //binding?.activitiesViewPager?.isUserInputEnabled = false
         // Add Margin or Spacing around TabItems
         val tabs = binding?.activitiesTabLayout?.getChildAt(0) as ViewGroup
         for (i in 0 until tabs.childCount) {

@@ -9,4 +9,6 @@
     <color name="secondaryDarkColor">#000000</color>
     <color name="primaryTextColor">#000000</color>
     <color name="secondaryTextColor">#ffffff</color>
+
+    <color name="detailsContentScrim">#cf2a27</color>
 </resources>

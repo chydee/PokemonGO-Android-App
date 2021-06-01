@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:elevation="8dp"
+        app:strokeColor="@color/secondaryDarkColor"
+        app:strokeWidth="1dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp">
+
+            <TextView
+                android:id="@+id/basicInfoTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:fontFamily="@font/poppins_bold"
+                android:text="Basic Info"
+                android:textColor="@color/primaryTextColor"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/pokemonLevelTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Level: 2"
+                android:textColor="@color/primaryTextColor"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/basicInfoTextView"
+                app:layout_constraintTop_toBottomOf="@+id/basicInfoTextView" />
+
+            <TextView
+                android:id="@+id/pokemonTypeLabelTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Types"
+                android:textColor="@color/primaryTextColor"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/pokemonLevelTextView"
+                app:layout_constraintTop_toBottomOf="@+id/pokemonLevelTextView" />
+
+            <TextView
+                android:id="@+id/typeGrass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/ic_green_rectangle"
+                android:fontFamily="@font/poppins_bold"
+                android:padding="4dp"
+                android:text="Grass"
+                android:textColor="@color/secondaryTextColor"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/pokemonTypeLabelTextView"
+                app:layout_constraintStart_toEndOf="@+id/pokemonTypeLabelTextView"
+                app:layout_constraintTop_toTopOf="@+id/pokemonTypeLabelTextView" />
+
+
+            <TextView
+                android:id="@+id/typePoison"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/ic_slateblue_rectangle"
+                android:fontFamily="@font/poppins_bold"
+                android:padding="4dp"
+                android:text="Poison"
+                android:textColor="@color/secondaryTextColor"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/pokemonTypeLabelTextView"
+                app:layout_constraintStart_toEndOf="@+id/typeGrass"
+                app:layout_constraintTop_toTopOf="@+id/pokemonTypeLabelTextView" />
+
+            <TextView
+                android:id="@+id/capturedOnTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/poppins_bold"
+                android:text="Captured on: July 23rd, 202"
+                android:textColor="@color/primaryTextColor"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/pokemonTypeLabelTextView"
+                app:layout_constraintTop_toBottomOf="@+id/pokemonTypeLabelTextView" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>
