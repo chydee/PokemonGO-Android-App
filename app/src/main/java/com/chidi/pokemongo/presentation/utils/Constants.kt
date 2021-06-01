@@ -1,6 +1,6 @@
 package com.chidi.pokemongo.presentation.utils
 
-import com.chidi.pokemongo.Character
+import com.chidi.pokemongo.domain.Character
 
 object Constants {
 
