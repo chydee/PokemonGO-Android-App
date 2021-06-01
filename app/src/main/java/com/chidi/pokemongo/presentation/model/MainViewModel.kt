@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModel
 import com.chidi.pokemongo.BuildConfig
 import com.chidi.pokemongo.data.local.SharedPreferenceManager
 import com.chidi.pokemongo.data.remote.response.ActivityResponse
+import com.chidi.pokemongo.data.remote.response.Captured
+import com.chidi.pokemongo.data.remote.response.MyTeam
+import com.chidi.pokemongo.data.remote.response.TokenResponse
 import com.chidi.pokemongo.data.repository.GoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -15,7 +18,10 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val repository: GoRepository, private val pref: SharedPreferenceManager) : ViewModel() {
+class MainViewModel @Inject constructor(
+    private val repository: GoRepository,
+    private val pref: SharedPreferenceManager,
+) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -23,16 +29,34 @@ class MainViewModel @Inject constructor(private val repository: GoRepository, pr
     val activity: LiveData<ActivityResponse>
         get() = _activity
 
+    private val _team = MutableLiveData<MyTeam>()
+    val team: LiveData<MyTeam>
+        get() = _team
+
+    private val _captured = MutableLiveData<Captured>()
+    val captured: LiveData<Captured>
+        get() = _captured
+
+    private val _token = MutableLiveData<TokenResponse>()
+    val token: LiveData<TokenResponse>
+        get() = _token
+
+
     fun getToken(email: String = BuildConfig.EMAIL) {
+        pref.clearAllStoredData()
         repository.getToken(email).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ response ->
                 pref.setUserToken(response.token)
+                _token.postValue(response)
             }, {
                 Timber.d(it)
             }).let { compositeDisposable.add(it) }
     }
 
+    /**
+     *  Get All Activities from cloud
+     */
     fun getActivity() {
         repository.getActivity().subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -40,11 +64,32 @@ class MainViewModel @Inject constructor(private val repository: GoRepository, pr
                 _activity.postValue(response)
             }, {
                 Timber.d(it)
+            }).let { compositeDisposable.add(it) }
+    }
+
+    // Get My Team from cloud
+    fun myTeam() {
+        repository.getMyTeam().subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ response ->
+                _team.postValue(response)
+            }, {
+                Timber.d(it)
+            }).let { compositeDisposable.add(it) }
+    }
+
+    // Get all captured pokemon from cloud
+    fun getCapturePokemons() {
+        repository.getCapturedPokemons().subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ response ->
+                _captured.postValue(response)
+            }, {
+                Timber.d(it)
                 //  errorCode is 401 get token and try again
                 //retryGetActivity()
             }).let { compositeDisposable.add(it) }
     }
-
 
     override fun onCleared() {
         compositeDisposable.dispose()

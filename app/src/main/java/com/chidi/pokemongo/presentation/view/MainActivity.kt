@@ -7,7 +7,11 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.chidi.pokemongo.R
 import com.chidi.pokemongo.databinding.ActivityMainBinding
+import com.chidi.pokemongo.domain.CapturedItem
+import com.chidi.pokemongo.domain.CommunityItem
+import com.chidi.pokemongo.domain.TeamItem
 import com.chidi.pokemongo.presentation.adapters.GoActivitiesPagerAdapter
+import com.chidi.pokemongo.presentation.model.LocalStorageViewModel
 import com.chidi.pokemongo.presentation.model.MainViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var activitiesPagerAdapter: GoActivitiesPagerAdapter
 
     private val viewModel: MainViewModel by viewModels()
+    private val localViewModel: LocalStorageViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         binding?.activitiesViewPager?.adapter = activitiesPagerAdapter
         setUpGOActivities()
         refreshToken()
+        clearAll()
     }
 
     override fun onDestroy() {
@@ -49,6 +55,14 @@ class MainActivity : AppCompatActivity() {
      */
     private fun refreshToken() {
         viewModel.getToken()
+        viewModel.token.observe(this, {
+            if (it != null) {
+                if (it.token.isNotEmpty()) {
+                    loadCloudFunctions()
+                    setUpObservers()
+                }
+            }
+        })
     }
 
     /**
@@ -83,4 +97,67 @@ class MainActivity : AppCompatActivity() {
             binding?.activitiesTabLayout?.requestLayout()
         }
     }
+
+    /**
+     *  Get rid of outdated data before adding new ones
+     */
+    private fun clearAll() {
+        with(localViewModel) {
+            deleteAllCommunity()
+            deleteAllTeams()
+            releaseAllCaptured()
+        }
+    }
+
+    private fun loadCloudFunctions() {
+        with(viewModel) {
+            getActivity()
+            myTeam()
+            getCapturePokemons()
+        }
+    }
+
+    private fun setUpObservers() {
+
+        viewModel.activity.observe(this, {
+            if (it != null) {
+                it.friends.forEach { friend ->
+                    localViewModel.saveCommunity(CommunityItem(friend.name, friend.pokemon.id, friend.pokemon.name, friend.pokemon.captured_at, true))
+                }
+                it.foes.forEach { foe ->
+                    localViewModel.saveCommunity(CommunityItem(foe.name, foe.pokemon.id, foe.pokemon.name, foe.pokemon.captured_at, false))
+                }
+            }
+        })
+
+        viewModel.team.observe(this, {
+            it?.forEach { team ->
+                localViewModel.saveTeamsToLocalStorage(
+                    TeamItem(
+                        team.name,
+                        team.captured_at,
+                        team.captured_long_at,
+                        team.captured_lat_at,
+                        team.id
+                    )
+                )
+            }
+        })
+
+        viewModel.captured.observe(this, {
+            it?.forEach { captured ->
+                localViewModel.saveCapturedPokemonToLocalStorage(
+                    CapturedItem(
+                        captured.name,
+                        captured.captured_long_at,
+                        captured.captured_lat_at,
+                        captured.captured_at,
+                        captured.id
+                    )
+                )
+            }
+        })
+    }
+
+
 }

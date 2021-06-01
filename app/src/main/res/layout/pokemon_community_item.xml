@@ -5,24 +5,26 @@
 
     <data>
 
+        <variable
+            name="community"
+            type="com.chidi.pokemongo.domain.CommunityItem" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="150dp"
-        android:layout_margin="8dp"
         app:strokeColor="@android:color/black"
         app:strokeWidth="1dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="400dp"
+            android:layout_height="150dp">
 
             <ImageView
                 android:id="@+id/pokemonTrainerImage"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="8dp"
                 android:contentDescription="@string/trainer_imageview_desc"
                 android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -37,6 +39,8 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
                 android:fontFamily="@font/poppins"
+                android:singleLine="true"
+                android:text="@{community.trainerName}"
                 android:textColor="@color/primaryTextColor"
                 android:textSize="14sp"
                 app:layout_constraintStart_toEndOf="@+id/pokemonTrainerImage"
@@ -45,25 +49,29 @@
 
             <TextView
                 android:id="@+id/pokemonState"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:fontFamily="@font/poppins"
-                android:textColor="@color/primaryTextColor"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="@+id/pokemonTrainerName"
-                app:layout_constraintTop_toBottomOf="@+id/pokemonTrainerName"
-                tools:text="Captured" />
-
-            <TextView
-                android:id="@+id/pokemonCapturedBy"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:fontFamily="@font/poppins"
+                android:singleLine="true"
+                android:text="Captured"
                 android:textColor="@color/primaryTextColor"
                 android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="@+id/pokemonTrainerName"
+                app:layout_constraintStart_toStartOf="@+id/pokemonTrainerName"
+                app:layout_constraintTop_toBottomOf="@+id/pokemonTrainerName" />
+
+            <TextView
+                android:id="@+id/pokemonCapturedBy"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/poppins"
+                android:text="@{community.pokemonName + ` ` + community.capturedAt}"
+                android:textColor="@color/primaryTextColor"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/pokemonTrainerImage"
+                app:layout_constraintEnd_toStartOf="@+id/pokemonCharacterImage"
                 app:layout_constraintStart_toStartOf="@+id/pokemonTrainerName"
                 app:layout_constraintTop_toBottomOf="@+id/pokemonState"
                 tools:text="Bulnbasaur 3 min ago" />
@@ -72,12 +80,15 @@
                 android:id="@+id/pokemonCharacterImage"
                 android:layout_width="96dp"
                 android:layout_height="96dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
                 android:src="@drawable/picasso_dummy"
                 app:civ_border_color="@android:color/black"
                 app:civ_border_width="2dp"
                 app:layout_constraintBottom_toBottomOf="@+id/pokemonTrainerImage"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/pokemonTrainerName"
                 app:layout_constraintTop_toTopOf="@+id/pokemonTrainerImage" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>

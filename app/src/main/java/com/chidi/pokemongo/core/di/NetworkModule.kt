@@ -62,8 +62,3 @@ object NetworkModule {
     @Singleton
     fun providePokemonGOService(retrofit: Retrofit): PokemonGOService = retrofit.create(PokemonGOService::class.java)
 }
-
-/* @Provides
- @Singleton
- fun provideApiHelper(apiHelper: ApiServiceHelperImpl): ApiServiceHelper = apiHelper
-}*/

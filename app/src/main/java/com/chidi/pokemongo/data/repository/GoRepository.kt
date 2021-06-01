@@ -6,4 +6,6 @@ import javax.inject.Inject
 class GoRepository @Inject constructor(private val remote: PokemonGOService) {
     fun getToken(email: String) = remote.requestForToken(email)
     fun getActivity() = remote.getActivity()
+    fun getMyTeam() = remote.myTeam()
+    fun getCapturedPokemons() = remote.getCaptured()
 }
