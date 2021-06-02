@@ -1,14 +1,10 @@
 package com.chidi.pokemongo.data.remote.api
 
-import com.chidi.pokemongo.data.remote.response.ActivityResponse
-import com.chidi.pokemongo.data.remote.response.Captured
-import com.chidi.pokemongo.data.remote.response.MyTeam
-import com.chidi.pokemongo.data.remote.response.TokenResponse
+import com.chidi.pokemongo.data.remote.param.Capture
+import com.chidi.pokemongo.data.remote.response.*
 import com.chidi.pokemongo.presentation.utils.Constants
 import io.reactivex.Observable
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface PokemonGOService {
     /**
@@ -41,4 +37,10 @@ interface PokemonGOService {
      */
     @GET(Constants.CAPTURED)
     fun getCaptured(): Observable<Captured>
+
+    @POST(Constants.CAPTURE)
+    fun capturePokemon(@Body capture: Capture): Observable<CaptureResponse>
+
+    @DELETE(Constants.RELEASE)
+    fun releasePokemon(@Query("id") id: Int): Observable<ReleaseResponse>
 }

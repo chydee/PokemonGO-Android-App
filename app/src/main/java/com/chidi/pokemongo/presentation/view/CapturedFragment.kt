@@ -1,10 +1,14 @@
 package com.chidi.pokemongo.presentation.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
@@ -13,6 +17,7 @@ import com.chidi.pokemongo.databinding.FragmentCapturedBinding
 import com.chidi.pokemongo.domain.CapturedItem
 import com.chidi.pokemongo.presentation.adapters.CapturedPokemonAdapter
 import com.chidi.pokemongo.presentation.model.LocalStorageViewModel
+import com.chidi.pokemongo.presentation.utils.Constants
 import com.chidi.pokemongo.presentation.utils.MarginItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -49,9 +54,6 @@ class CapturedFragment : Fragment(), CapturedPokemonAdapter.OnCapturedItemClickL
         binding = null
     }
 
-    override fun onItemClick(community: CapturedItem) {
-    }
-
     private fun getCapturedItemFromDatabase() {
         viewModel.getAllCaptured()
     }
@@ -73,6 +75,22 @@ class CapturedFragment : Fragment(), CapturedPokemonAdapter.OnCapturedItemClickL
         binding?.capturedRecyclerView?.addItemDecoration(MarginItemDecoration(resources.getDimensionPixelSize(R.dimen.margin)))
         binding?.capturedRecyclerView?.adapter = adapter
         adapter.setOnClickListener(this)
+    }
+
+    override fun onItemClick(captured: CapturedItem, sharedImageView: ImageView) {
+        val intent = Intent(requireContext(), PokemonDetail::class.java).apply {
+            putExtra(Constants.EXTRA_POKEMON_TYPE, Constants.TYPE_CAPTURED)
+            putExtra(Constants.EXTRA_CAPTURED, captured)
+        }
+        val options: ActivityOptionsCompat? = ViewCompat.getTransitionName(sharedImageView)?.let {
+            ActivityOptionsCompat.makeSceneTransitionAnimation(
+                requireActivity(),
+                sharedImageView,
+                it
+            )
+        }
+
+        startActivity(intent, options?.toBundle())
     }
 
 }

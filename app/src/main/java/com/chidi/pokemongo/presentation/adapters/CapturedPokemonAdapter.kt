@@ -2,6 +2,8 @@ package com.chidi.pokemongo.presentation.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -14,7 +16,7 @@ class CapturedPokemonAdapter : RecyclerView.Adapter<CapturedPokemonAdapter.Captu
     private lateinit var listener: OnCapturedItemClickListener
 
     interface OnCapturedItemClickListener {
-        fun onItemClick(community: CapturedItem)
+        fun onItemClick(captured: CapturedItem, sharedImageView: ImageView)
     }
 
 
@@ -56,11 +58,13 @@ class CapturedPokemonAdapter : RecyclerView.Adapter<CapturedPokemonAdapter.Captu
     }
 
     override fun onBindViewHolder(holder: CapturedPokemonAdapter.CapturedPokemonViewHolder, position: Int) {
-
         val item = differ.currentList[position]
         holder.bind()
+
+        ViewCompat.setTransitionName(holder.itemView.findViewById(R.id.capturedImage), item.name)
+
         holder.itemView.setOnClickListener {
-            listener.onItemClick(item)
+            listener.onItemClick(item, holder.itemView.findViewById(R.id.capturedImage))
         }
 
     }

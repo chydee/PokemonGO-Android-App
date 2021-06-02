@@ -1,5 +1,6 @@
 package com.chidi.pokemongo.presentation.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import com.chidi.pokemongo.databinding.FragmentMyTeamBinding
 import com.chidi.pokemongo.domain.TeamItem
 import com.chidi.pokemongo.presentation.adapters.MyTeamAdapter
 import com.chidi.pokemongo.presentation.model.LocalStorageViewModel
+import com.chidi.pokemongo.presentation.utils.Constants
 import com.chidi.pokemongo.presentation.utils.MarginItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -66,7 +68,11 @@ class MyTeamFragment : Fragment() {
 
         adapter.setOnClickListener(object : MyTeamAdapter.OnMyTeamItemClickListener {
             override fun onItemClick(team: TeamItem) {
-
+                val intent = Intent(requireContext(), PokemonDetail::class.java).apply {
+                    putExtra(Constants.EXTRA_POKEMON_TYPE, Constants.TYPE_CAPTURED)
+                    putExtra(Constants.EXTRA_TEAM, team)
+                }
+                startActivity(intent)
             }
         })
     }

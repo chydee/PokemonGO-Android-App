@@ -1,5 +1,6 @@
 package com.chidi.pokemongo.presentation.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -64,6 +65,12 @@ class ExploreFragment : Fragment(), OnMapReadyCallback {
 
         mMap.setOnMarkerClickListener { marker ->
             Toast.makeText(requireContext(), marker.position.toString(), Toast.LENGTH_SHORT).show()
+            val pokemon = Constants.randomCharacters.find { it.name == marker.title }
+            val intent = Intent(requireContext(), PokemonDetail::class.java).apply {
+                putExtra(Constants.EXTRA_POKEMON_TYPE, Constants.TYPE_WILD)
+                putExtra(Constants.EXTRA_POKEMON, pokemon)
+            }
+            startActivity(intent)
             true
         }
     }

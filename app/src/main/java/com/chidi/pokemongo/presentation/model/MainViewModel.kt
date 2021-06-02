@@ -5,10 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.chidi.pokemongo.BuildConfig
 import com.chidi.pokemongo.data.local.SharedPreferenceManager
-import com.chidi.pokemongo.data.remote.response.ActivityResponse
-import com.chidi.pokemongo.data.remote.response.Captured
-import com.chidi.pokemongo.data.remote.response.MyTeam
-import com.chidi.pokemongo.data.remote.response.TokenResponse
+import com.chidi.pokemongo.data.remote.param.Capture
+import com.chidi.pokemongo.data.remote.response.*
 import com.chidi.pokemongo.data.repository.GoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -40,6 +38,14 @@ class MainViewModel @Inject constructor(
     private val _token = MutableLiveData<TokenResponse>()
     val token: LiveData<TokenResponse>
         get() = _token
+
+    private val _capture = MutableLiveData<CaptureResponse>()
+    val capturePokemon: LiveData<CaptureResponse>
+        get() = _capture
+
+    private val _release = MutableLiveData<ReleaseResponse>()
+    val releasePokemon: LiveData<ReleaseResponse>
+        get() = _release
 
 
     fun getToken(email: String = BuildConfig.EMAIL) {
@@ -88,6 +94,27 @@ class MainViewModel @Inject constructor(
                 Timber.d(it)
                 //  errorCode is 401 get token and try again
                 //retryGetActivity()
+            }).let { compositeDisposable.add(it) }
+    }
+
+
+    fun capturePokemon(capture: Capture) {
+        repository.capturePokemon(capture).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ response ->
+                _capture.postValue(response)
+            }, {
+                Timber.d(it)
+            }).let { compositeDisposable.add(it) }
+    }
+
+    fun releasePokemon(id: Int) {
+        repository.releasePokemon(id).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ response ->
+                _release.postValue(response)
+            }, {
+                Timber.d(it)
             }).let { compositeDisposable.add(it) }
     }
 

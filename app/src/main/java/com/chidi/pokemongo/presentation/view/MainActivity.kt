@@ -1,6 +1,8 @@
 package com.chidi.pokemongo.presentation.view
 
 import android.os.Bundle
+import android.transition.Fade
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.activity.viewModels
@@ -16,6 +18,7 @@ import com.chidi.pokemongo.presentation.model.MainViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
@@ -30,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
+        setUpTransition()
         activitiesPagerAdapter = GoActivitiesPagerAdapter(this@MainActivity) // create a new GoActivitiesPagerAdapter
         activitiesPagerAdapter.setFragments(
             listOf(
@@ -157,6 +161,17 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         })
+    }
+
+    private fun setUpTransition() {
+        val fade = Fade()
+        val decor: View = window.decorView
+        //fade.excludeTarget(decor.findViewById(R.id.action_bar_container), true)
+        fade.excludeTarget(android.R.id.statusBarBackground, true)
+        fade.excludeTarget(android.R.id.navigationBarBackground, true)
+        window.enterTransition = fade
+        window.exitTransition = fade
+
     }
 
 

@@ -2,9 +2,12 @@ package com.chidi.pokemongo.presentation.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.chidi.pokemongo.R
 import com.chidi.pokemongo.databinding.PokemonCommunityItemBinding
 import com.chidi.pokemongo.domain.CommunityItem
 
@@ -13,7 +16,7 @@ class CommunityAdapter : RecyclerView.Adapter<CommunityAdapter.CommunityViewHold
     private lateinit var listener: OnItemClickListener
 
     interface OnItemClickListener {
-        fun onItemClick(community: CommunityItem)
+        fun onItemClick(position: Int, community: CommunityItem, animItem: ImageView)
     }
 
 
@@ -55,11 +58,13 @@ class CommunityAdapter : RecyclerView.Adapter<CommunityAdapter.CommunityViewHold
     }
 
     override fun onBindViewHolder(holder: CommunityViewHolder, position: Int) {
-
         val item = differ.currentList[position]
         holder.bind(item)
+
+        ViewCompat.setTransitionName(holder.itemView.findViewById(R.id.pokemonCharacterImage), item.pokemonName)
+
         holder.itemView.setOnClickListener {
-            listener.onItemClick(item)
+            listener.onItemClick(holder.adapterPosition, item, holder.itemView.findViewById(R.id.pokemonCharacterImage))
         }
 
     }

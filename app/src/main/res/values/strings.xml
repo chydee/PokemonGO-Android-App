@@ -4,8 +4,6 @@
     <string name="go_activity_community">Community</string>
     <string name="go_activity_my_team">My Team</string>
     <string name="go_activity_captured">Captured</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="trainer_imageview_desc">"Pokemon Trainer Image "</string>
     <string name="friends_card_label">Friends</string>
     <string name="foes_card_label">Foes</string>
@@ -14,4 +12,10 @@
     <string name="default_team_type">Type: Grass</string>
     <string name="fab_desc">Captured Status Floating Action Button</string>
     <string name="capture_btn_text">Capture</string>
+    <string name="default_pokemon_name">Bulbasaur</string>
+    <string name="pokemon_found_in">Found In</string>
+    <string name="pokemon_captured_in">Captured In</string>
+    <string name="captured_by_xxxx_placeholder">Captured By XXXX</string>
+    <string name="capture_diagle_title">Assign a name</string>
+    <string name="capture_dialog_name_hint">Name:</string>
 </resources>

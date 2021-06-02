@@ -15,6 +15,26 @@ object Constants {
     const val RELEASE = "release"
     // END HTTP Request Endpoints
 
+
+    //INTENT_EXTRAS
+    const val EXTRA_POKEMON_TYPE = "POKEMON_TYPE"
+    const val POKEMON_LAT = "LATITUDE"
+    const val POKEMON_LONG = "LONGITUDE"
+    const val EXTRA_POKEMON = "POKEMON"
+    const val EXTRA_CAPTURED = "CAPTURED"
+    const val EXTRA_TEAM = "MY_TEAM"
+    const val EXTRA_COMMUNITY = "COMMUNITY"
+    const val EXTRA_ANIMAL_IMAGE_TRANSITION_NAME = "POKEMON_TRANSITION_NAME"
+
+    //POKEMON TYPES
+    const val TYPE_WILD = "WILD"
+    const val TYPE_CAPTURED = "CAPTURED"
+    const val TYPE_CAPTURED_BY_OTHER = "CAPTURED_BY_OTHER"
+
+
+    const val lat = 20.10099206786478
+    const val long = 32.5910273441159
+
     val randomCharacters = listOf<Character>(
         Character(1, "Bulbasaur", 20.10099206786478, 32.5910273441159),
         Character(10, "Caterpie", -7.558541622012861, 44.741980750732765),
