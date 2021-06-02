@@ -1,11 +1,14 @@
 package com.chidi.pokemongo.presentation.view
 
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
+import android.animation.ValueAnimator
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.transition.Fade
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.ScaleAnimation
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -20,6 +23,7 @@ import com.chidi.pokemongo.domain.CapturedItem
 import com.chidi.pokemongo.domain.Character
 import com.chidi.pokemongo.domain.CommunityItem
 import com.chidi.pokemongo.domain.TeamItem
+import com.chidi.pokemongo.presentation.model.LocalStorageViewModel
 import com.chidi.pokemongo.presentation.model.MainViewModel
 import com.chidi.pokemongo.presentation.utils.AppBarStateChangeListener
 import com.chidi.pokemongo.presentation.utils.Constants
@@ -30,6 +34,9 @@ import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import de.hdodenhof.circleimageview.CircleImageView
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.util.*
 
 
 @AndroidEntryPoint
@@ -38,6 +45,7 @@ class PokemonDetail : AppCompatActivity() {
     private var binding: ActivityPokemonDetailBinding? = null
 
     private val viewModel: MainViewModel by viewModels()
+    private val localVM: LocalStorageViewModel by viewModels()
     private var pokemonType: String? = null
 
     private var captured: CapturedItem? = null
@@ -156,7 +164,6 @@ class PokemonDetail : AppCompatActivity() {
     private fun whenPokemonIsCaptured() {
         binding?.root?.findViewById<CircleImageView>(R.id.capturedIndicatorImageView)?.visibility = View.GONE
         binding?.capturedByLayout?.root?.visibility = View.GONE
-        binding?.btnCapturePokemon?.isGone = true
         binding?.btnCapturePokemon?.visibility = View.GONE
         binding?.foundInLayout?.root?.findViewById<TextView>(R.id.foundInTextView)?.text = getString(R.string.pokemon_captured_in)
     }
@@ -165,7 +172,6 @@ class PokemonDetail : AppCompatActivity() {
         binding?.capturedByLayout?.root?.visibility = View.VISIBLE
         binding?.btnCapturePokemon?.visibility = View.GONE
         binding?.capturedIndicatorImageView?.visibility = View.INVISIBLE
-        binding?.btnCapturePokemon?.isGone = true
         binding?.foundInLayout?.root?.visibility = View.GONE
     }
 
@@ -185,17 +191,6 @@ class PokemonDetail : AppCompatActivity() {
         Picasso.get().load(url).into(binding?.foundInLayout?.pokemonCoordinatesImageView)
     }
 
-    private fun scaleView(v: View, startScale: Float, endScale: Float) {
-        val anim: Animation = ScaleAnimation(
-            1f, 1f,  // Start and end values for the X axis scaling
-            startScale, endScale,  // Start and end values for the Y axis scaling
-            Animation.RELATIVE_TO_SELF, 0f,  // Pivot point of X scaling
-            Animation.RELATIVE_TO_SELF, 1f
-        ) // Pivot point of Y scaling
-        anim.fillAfter = true // Needed to keep the result of the animation
-        anim.duration = 1000
-        v.startAnimation(anim)
-    }
 
     private fun setUpTransition() {
         val fade = Fade()
@@ -240,16 +235,57 @@ class PokemonDetail : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.capturePokemon.observe(this, {
-            if (it != null) {
+
+        val currentTime = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LocalDateTime.now()
+        } else {
+            val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss", Locale.ROOT)
+            sdf.format(Date())
+        }
+
+        viewModel.capturePokemon.observe(this, { response ->
+            if (response != null) {
                 //Add captured to team and show animation
+                val team = pokemon?.let {
+                    TeamItem(it.name, currentTime.toString(), it.rand_lat, it.rand_long, it.id)
+                }
+                if (team != null) {
+                    localVM.saveTeamsToLocalStorage(team)
+                }
+                onCaptureSuccessful()
+            } else {
+                Toast.makeText(this, "Pokemon already captured", Toast.LENGTH_SHORT).show()
             }
+
         })
+
 
         viewModel.releasePokemon.observe(this, {
             if (it != null) {
                 Timber.d("Pokemon Released")
             }
         })
+    }
+
+    /**
+     *  Show Pokeball Animation when the Capture request is successful
+     */
+    private fun onCaptureSuccessful() {
+        binding?.successImageView?.visibility = View.VISIBLE
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            binding?.successImageView?.visibility = View.GONE
+        }, 3000)
+
+        val scaleDown = ObjectAnimator.ofPropertyValuesHolder(
+            binding?.successImageView,
+            PropertyValuesHolder.ofFloat("scaleX", 0.5f),
+            PropertyValuesHolder.ofFloat("scaleY", 0.5f)
+        )
+        scaleDown.duration = 2000
+        scaleDown.repeatMode = ValueAnimator.REVERSE
+        scaleDown.repeatCount = 6
+        scaleDown.start()
+
     }
 }

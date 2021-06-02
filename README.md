@@ -2,7 +2,9 @@
 
   an app that simulates some of the functionalities of the successful mobile game PokemonGO using the official Android SDK and its frameworks.
 
-    <img src="https://github.com/chydee/TechTris-Test-App/blob/master/screens.png" />
+    <img src="screenshots/explore.png" /> <img src="screenshots/explore.png" /> <img src="screenshots/explore.png" />
+    <img src="screenshots/explore.png" /> <img src="screenshots/explore.png" /> <img src="screenshots/explore.png" />
+    <img src="screenshots/explore.png" />
 
 
   Download APK: https://github.com/chydee/TechTris-Test-App/releases/tag/v2.0
@@ -33,9 +35,9 @@ To test this application, please use an Android device or emulator (OS 5.0 or ne
 ## WHAT WAS DONE:
 **Understand the Task** - Before proceeding with coding the features I had to understand the problem, how to approach it,
   ways to achieve what was expected.
-**Leveraging on resources to make process faster** - I Google some concepts and also search stackoverflow for possible solutions to problems I faced
+**Leveraged on resources to make process faster** - I Google some concepts and also search stackoverflow for possible solutions to problems I faced
 
 ## WHAT I WOULD DO BETTER:
- If I had enough time I'd have created my own custom camera with a custom interface to suit my need and and tailor it to have the look and feel as modeled in the design.
+ If I had enough time I'd have written Unit, Integration and UI tests for the different classes, fragments and/or activities implemented
 
 

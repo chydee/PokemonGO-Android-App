@@ -11,7 +11,6 @@ import com.chidi.pokemongo.R
 import com.chidi.pokemongo.databinding.ActivityMainBinding
 import com.chidi.pokemongo.domain.CapturedItem
 import com.chidi.pokemongo.domain.CommunityItem
-import com.chidi.pokemongo.domain.TeamItem
 import com.chidi.pokemongo.presentation.adapters.GoActivitiesPagerAdapter
 import com.chidi.pokemongo.presentation.model.LocalStorageViewModel
 import com.chidi.pokemongo.presentation.model.MainViewModel
@@ -108,7 +107,6 @@ class MainActivity : AppCompatActivity() {
     private fun clearAll() {
         with(localViewModel) {
             deleteAllCommunity()
-            deleteAllTeams()
             releaseAllCaptured()
         }
     }
@@ -131,20 +129,6 @@ class MainActivity : AppCompatActivity() {
                 it.foes.forEach { foe ->
                     localViewModel.saveCommunity(CommunityItem(foe.name, foe.pokemon.id, foe.pokemon.name, foe.pokemon.captured_at, false))
                 }
-            }
-        })
-
-        viewModel.team.observe(this, {
-            it?.forEach { team ->
-                localViewModel.saveTeamsToLocalStorage(
-                    TeamItem(
-                        team.name,
-                        team.captured_at,
-                        team.captured_long_at,
-                        team.captured_lat_at,
-                        team.id
-                    )
-                )
             }
         })
 

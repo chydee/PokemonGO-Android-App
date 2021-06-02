@@ -12,6 +12,7 @@ import com.chidi.pokemongo.databinding.FragmentMyTeamBinding
 import com.chidi.pokemongo.domain.TeamItem
 import com.chidi.pokemongo.presentation.adapters.MyTeamAdapter
 import com.chidi.pokemongo.presentation.model.LocalStorageViewModel
+import com.chidi.pokemongo.presentation.model.MainViewModel
 import com.chidi.pokemongo.presentation.utils.Constants
 import com.chidi.pokemongo.presentation.utils.MarginItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,6 +26,7 @@ class MyTeamFragment : Fragment() {
     private var binding: FragmentMyTeamBinding? = null
 
     private val viewModel: LocalStorageViewModel by viewModels()
+    private val mainVM: MainViewModel by viewModels()
     private lateinit var adapter: MyTeamAdapter
 
     override fun onCreateView(
@@ -56,8 +58,22 @@ class MyTeamFragment : Fragment() {
         viewModel.myTeam.observe(viewLifecycleOwner, {
             if (it != null && it.isNotEmpty()) {
                 setUpRecyclerView(it)
+            } else {
+                getMyTeamFromCloud()
             }
         })
+        mainVM.team.observe(viewLifecycleOwner, {
+            if (it != null) {
+                setUpRecyclerView(it)
+            }
+        })
+    }
+
+    /**
+     * Retrieve Captured from cloud if the local storage is empty
+     */
+    private fun getMyTeamFromCloud() {
+        mainVM.myTeam()
     }
 
     private fun setUpRecyclerView(myTeam: List<TeamItem>) {

@@ -1,5 +1,6 @@
 package com.chidi.pokemongo.presentation.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -10,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.chidi.pokemongo.R
 import com.chidi.pokemongo.databinding.PokemonCommunityItemBinding
 import com.chidi.pokemongo.domain.CommunityItem
+import com.chidi.pokemongo.presentation.utils.getTimeAgo
+import com.chidi.pokemongo.presentation.utils.timeFormat
+
 
 class CommunityAdapter : RecyclerView.Adapter<CommunityAdapter.CommunityViewHolder>() {
 
@@ -35,6 +39,7 @@ class CommunityAdapter : RecyclerView.Adapter<CommunityAdapter.CommunityViewHold
     inner class CommunityViewHolder(private var binding: PokemonCommunityItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(community: CommunityItem) {
             binding.community = community
+            Log.d("PrettyTime : ", getTimeAgo(timeFormat(community.capturedAt)))
             binding.executePendingBindings()
         }
     }
